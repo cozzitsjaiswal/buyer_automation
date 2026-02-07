@@ -1,6 +1,16 @@
 import { useState } from 'react';
 import { api, BUYER_TYPES, PRODUCT_OPTIONS, SOURCE_OPTIONS } from '../api';
 
+/**
+ * UI page for bulk importing website URLs with metadata and viewing the import results.
+ *
+ * Renders a textarea to paste one URL per line, controls to set country, city, buyer type, source,
+ * and product interest, and an "Import URLs" button that sends the prepared payload to the
+ * backend endpoint. Displays a results table showing each URL, whether import succeeded, and
+ * either the buyer ID (on success) or the error message (on failure).
+ *
+ * @returns {JSX.Element} The Import URLs page component.
+ */
 export default function ImportUrlsPage() {
   const [urls, setUrls] = useState('');
   const [country, setCountry] = useState('Germany');
