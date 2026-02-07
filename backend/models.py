@@ -55,6 +55,18 @@ class BuyerBase(BaseModel):
     @field_validator("buyer_type")
     @classmethod
     def validate_buyer_type(cls, value: str) -> str:
+        """
+        Ensure the provided buyer_type is one of the allowed values: 'Importer', 'Wholesaler', or 'Processor'.
+        
+        Parameters:
+            value (str): The buyer type to validate.
+        
+        Returns:
+            str: The original `value` if it is valid.
+        
+        Raises:
+            ValueError: If `value` is not one of the allowed buyer types.
+        """
         allowed = {"Importer", "Wholesaler", "Processor"}
         if value not in allowed:
             raise ValueError(f"buyer_type must be one of: {', '.join(sorted(allowed))}")
@@ -63,6 +75,18 @@ class BuyerBase(BaseModel):
     @field_validator("source")
     @classmethod
     def validate_source(cls, value: str) -> str:
+        """
+        Validate that `value` is one of the allowed buyer source options.
+        
+        Parameters:
+            value (str): Source identifier to validate. Allowed values: "Google Maps", "B2B", "LinkedIn", "Manual".
+        
+        Returns:
+            str: The validated source string.
+        
+        Raises:
+            ValueError: If `value` is not one of the allowed options.
+        """
         allowed = {"Google Maps", "B2B", "LinkedIn", "Manual"}
         if value not in allowed:
             raise ValueError(f"source must be one of: {', '.join(sorted(allowed))}")
@@ -71,6 +95,18 @@ class BuyerBase(BaseModel):
     @field_validator("product_interest")
     @classmethod
     def validate_product_interest(cls, value: str) -> str:
+        """
+        Validate that product_interest is one of "Turmeric", "Dal", or "Multiple".
+        
+        Parameters:
+            value (str): Candidate product interest.
+        
+        Returns:
+            str: The validated value.
+        
+        Raises:
+            ValueError: If value is not one of "Turmeric", "Dal", "Multiple".
+        """
         allowed = {"Turmeric", "Dal", "Multiple"}
         if value not in allowed:
             raise ValueError(f"product_interest must be one of: {', '.join(sorted(allowed))}")
@@ -79,6 +115,19 @@ class BuyerBase(BaseModel):
     @field_validator("status")
     @classmethod
     def validate_status(cls, value: str) -> str:
+        """
+        Validate that `value` is one of the allowed buyer status strings.
+        
+        Parameters:
+            cls: The class where the validator is defined.
+            value (str): Candidate status string to validate.
+        
+        Returns:
+            str: The validated status string.
+        
+        Raises:
+            ValueError: If `value` is not one of "New", "Contacted", "Sample Sent", "Negotiation", "Closed", or "Lost".
+        """
         allowed = {"New", "Contacted", "Sample Sent", "Negotiation", "Closed", "Lost"}
         if value not in allowed:
             raise ValueError(f"status must be one of: {', '.join(sorted(allowed))}")
@@ -96,6 +145,18 @@ class BuyerUpdate(BaseModel):
     @field_validator("status")
     @classmethod
     def validate_status(cls, value: Optional[str]) -> Optional[str]:
+        """
+        Validate that a buyer status is either None or one of the allowed status values.
+        
+        Parameters:
+            value (Optional[str]): The status value to validate.
+        
+        Returns:
+            Optional[str]: The validated status value (unchanged) when valid, or None.
+        
+        Raises:
+            ValueError: If `value` is not None and is not one of: Closed, Contacted, Lost, New, Negotiation, Sample Sent.
+        """
         if value is None:
             return value
         allowed = {"New", "Contacted", "Sample Sent", "Negotiation", "Closed", "Lost"}

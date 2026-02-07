@@ -12,6 +12,12 @@ Base = declarative_base()
 
 
 def get_db():
+    """
+    Provide a SQLAlchemy Session for use by callers and ensure the session is closed after use.
+    
+    Returns:
+        Session: A SQLAlchemy Session instance yielded to the caller; the generator guarantees the session is closed when the context is exited.
+    """
     db = SessionLocal()
     try:
         yield db

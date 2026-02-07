@@ -1,3 +1,8 @@
+/**
+ * Render the ExportPage React component that provides a simple UI for downloading buyer records as an Excel file.
+ *
+ * @returns {JSX.Element} A React element containing a title, description, and a button that opens the export URL in a new browser tab to trigger the download.
+ */
 export default function ExportPage() {
   const handleExport = () => {
     window.open('http://127.0.0.1:8000/export', '_blank');

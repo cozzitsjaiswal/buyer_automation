@@ -6,6 +6,13 @@ import DashboardPage from './pages/DashboardPage';
 import ExportPage from './pages/ExportPage';
 import ImportUrlsPage from './pages/ImportUrlsPage';
 
+/**
+ * Root application component that manages page navigation and renders the sidebar and selected page.
+ *
+ * Renders a Sidebar with the current active page and a main content area showing one of:
+ * Dashboard, Add Buyer, Buyer List, Import URLs, or Export to Excel.
+ * @returns {JSX.Element} The app layout containing the Sidebar and the currently selected page.
+ */
 export default function App() {
   const [activePage, setActivePage] = useState('Dashboard');
 

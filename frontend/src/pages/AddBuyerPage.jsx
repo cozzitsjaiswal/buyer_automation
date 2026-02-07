@@ -22,6 +22,12 @@ const initialForm = {
   remarks: '',
 };
 
+/**
+ * Renders the Add Buyer page with a two-column form to create a new buyer, performs basic validation, and submits the buyer data.
+ *
+ * The form requires company_name and country, validates email format when provided, converts numeric and date fields to appropriate values for submission, and displays success or error messages after submission.
+ * @returns {JSX.Element} The rendered Add Buyer page component.
+ */
 export default function AddBuyerPage() {
   const [form, setForm] = useState(initialForm);
   const [message, setMessage] = useState('');

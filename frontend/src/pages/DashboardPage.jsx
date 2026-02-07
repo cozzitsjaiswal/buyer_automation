@@ -1,6 +1,16 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api';
 
+/**
+ * Render the Dashboard page displaying buyer metrics and a list of recent buyers.
+ *
+ * Fetches data from the `/dashboard` endpoint on mount and populates local state with
+ * `total_buyers`, `status_cards`, and `latest_buyers`. The UI shows a total buyers card,
+ * a grid of status cards (each with a status label and count), and a table of the latest buyers.
+ * Missing buyer emails are displayed as `-`.
+ *
+ * @returns {JSX.Element} The dashboard page element containing metrics and the latest buyers table.
+ */
 export default function DashboardPage() {
   const [data, setData] = useState({ total_buyers: 0, status_cards: [], latest_buyers: [] });
 

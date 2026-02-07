@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react';
 import { api, STATUS_OPTIONS } from '../api';
 
+/**
+ * Renders a Buyer List page with filtering and inline editing.
+ *
+ * Displays a searchable, status-filterable table of buyers, fetches buyer data on mount and when the Apply button is used, and allows updating a buyer's status or remarks inline (updates are persisted via API and the list is refreshed).
+ *
+ * @returns {JSX.Element} The Buyer List page component.
+ */
 export default function BuyerListPage() {
   const [buyers, setBuyers] = useState([]);
   const [search, setSearch] = useState('');
