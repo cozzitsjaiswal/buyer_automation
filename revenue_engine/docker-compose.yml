@@ -1,0 +1,20 @@
+services:
+  api:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://revenue:revenue@db:5432/revenue
+      REDIS_URL: redis://redis:6379/0
+      OUTREACH_DRY_RUN: "true"
+    ports: ["8000:8000"]
+    depends_on: [db, redis]
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: revenue
+      POSTGRES_PASSWORD: revenue
+      POSTGRES_DB: revenue
+    volumes: [revenue_db:/var/lib/postgresql/data]
+  redis:
+    image: redis:7-alpine
+volumes:
+  revenue_db:
