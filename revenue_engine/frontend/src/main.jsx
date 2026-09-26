@@ -1,0 +1,12 @@
+import React,{useEffect,useState} from "react";
+import {createRoot} from "react-dom/client";
+import "./style.css";
+const API=import.meta.env.VITE_API_URL||"http://localhost:8000/api";
+function App(){
+ const [token,setToken]=useState(localStorage.token||""); const [metrics,setMetrics]=useState(null); const [leads,setLeads]=useState([]); const [login,setLogin]=useState({email:"",password:""}); const [err,setErr]=useState("");
+ async function call(path,opts={}){const r=await fetch(API+path,{...opts,headers:{"Content-Type":"application/json",Authorization:"Bearer "+token,...opts.headers}}); if(!r.ok)throw new Error(await r.text()); return r.json()}
+ async function refresh(){try{setMetrics(await call("/dashboard/metrics"));setLeads(await call("/leads?limit=50"))}catch(e){setErr(e.message)}}
+ useEffect(()=>{if(token)refresh()},[token]);
+ if(!token)return <main className="login"><section><h1>Amravati Revenue Engine</h1><p>Lead → conversation → payment → fulfillment</p><input placeholder="Email" value={login.email} onChange={e=>setLogin({...login,email:e.target.value})}/><input placeholder="Password" type="password" value={login.password} onChange={e=>setLogin({...login,password:e.target.value})}/><button onClick={async()=>{try{const x=await fetch(API+"/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(login)});const d=await x.json();if(!x.ok)throw Error(d.detail||"Login failed");localStorage.token=d.access_token;setToken(d.access_token)}catch(e){setErr(e.message)}}}>Sign in</button>{err&&<small>{err}</small>}</section></main>;
+ return <main><header><div><strong>Revenue Engine</strong><span>Operations Console</span></div><button onClick={()=>{localStorage.removeItem("token");setToken("")}}>Sign out</button></header><section className="grid">{Object.entries(metrics||{}).slice(0,9).map(([k,v])=><article key={k}><small>{k.replaceAll("_"," ")}</small><b>{typeof v==="number"&&k==="revenue"?"₹"+v.toLocaleString("en-IN"):v}</b></article>)}</section><section className="panel"><h2>Leads</h2><table><thead><tr><th>Business</th><th>Status</th><th>Score</th><th>Package</th></tr></thead><tbody>{leads.map(l=><tr key={l.id}><td>#{l.business_id}</td><td>{l.status}</td><td>{l.lead_score}</td><td>{l.package||"—"}</td></tr>)}</tbody></table></section>{err&&<footer>{err}</footer>}</main>}
+createRoot(document.getElementById("root")).render(<App/>);
