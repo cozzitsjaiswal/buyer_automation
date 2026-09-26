@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+import csv, io
 from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func
@@ -88,6 +89,31 @@ def metrics(db:Session=Depends(get_db),user=Depends(current_user)):
     counts={s:db.query(func.count(Lead.id)).filter(Lead.status==s).scalar() for s in ["NEW","QUALIFIED","CONTACTED","REPLIED","INTERESTED","PAYMENT_PENDING","PAID","FULFILLMENT","COMPLETED","OPTED_OUT"]}
     revenue=db.query(func.coalesce(func.sum(Order.amount),0)).filter(Order.status=="PAID").scalar()
     return {"leads":db.query(func.count(Lead.id)).scalar(),"revenue":float(revenue or 0),**{k.lower():v for k,v in counts.items()}}
+
+@router.get("/packages")
+def packages(user=Depends(current_user)):
+    return [{"id":"digital_identity","name":"Digital Identity Package","amount":4999},{"id":"growth_suite","name":"Growth Suite Package","amount":12999}]
+
+@router.post("/leads/import")
+def import_leads(file_content:str, db:Session=Depends(get_db), user=Depends(current_user)):
+    reader=csv.DictReader(io.StringIO(file_content))
+    required={"business_name"}
+    if not required.issubset(set(reader.fieldnames or [])): raise HTTPException(400,"CSV requires business_name")
+    created=0
+    for row in reader:
+        name=(row.get("business_name") or "").strip()
+        if not name: continue
+        if row.get("email") and db.query(Business).filter(Business.email==row["email"]).first(): continue
+        b=Business(name=name,locality=row.get("locality"),phone=row.get("phone"),email=row.get("email"),sector=row.get("sector"),website=row.get("website"),source=row.get("source"))
+        db.add(b); db.flush()
+        db.add(Lead(business_id=b.id,package=row.get("package"),status="NEW",lead_score=20,digital_presence_score=15))
+        created+=1
+    db.commit(); audit(db,user.email,"LEADS_IMPORTED","batch",None,str(created))
+    return {"created":created}
+
+@router.get("/orders")
+def orders(limit:int=100,db:Session=Depends(get_db),user=Depends(current_user)):
+    return db.query(Order).order_by(Order.created_at.desc()).limit(min(limit,500)).all()
 
 @router.get("/audit-logs")
 def audit_logs(limit:int=100,db:Session=Depends(get_db),user=Depends(current_user)):
