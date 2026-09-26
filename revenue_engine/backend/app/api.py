@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from decimal import Decimal
 import csv, io
 from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -13,7 +14,6 @@ from .dependencies import current_user
 router=APIRouter(prefix="/api")
 
 PACKAGES={"digital_identity":Decimal("4999"),"growth_suite":Decimal("12999")}
-from decimal import Decimal
 
 def audit(db, actor, action, typ=None, entity_id=None, detail=None):
     db.add(AuditLog(actor=actor,action=action,entity_type=typ,entity_id=str(entity_id) if entity_id else None,detail=detail))
