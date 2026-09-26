@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     outreach_dry_run: bool = True
     max_outreach_per_hour: int = 50
     upi_vpa: str = ""
-    upi_payee_name: str = ""
+    upi_payee_name: str = ""\n    auto_create_tables: bool = True\n    admin_email: str = ""\n    admin_password: str = ""
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 settings = Settings()
